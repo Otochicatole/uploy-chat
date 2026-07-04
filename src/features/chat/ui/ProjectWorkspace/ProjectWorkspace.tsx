@@ -163,7 +163,10 @@ function SystemPromptPanel() {
     return null;
   }
 
-  if (!isEditing && activeProject.systemPrompt) {
+  const hasSavedPrompt = activeProject.systemPrompt.trim().length > 0;
+  const canSavePrompt = draft.trim().length > 0;
+
+  if (!isEditing && hasSavedPrompt) {
     return (
       <div className="relative rounded-lg bg-uploy-tertiary p-4 pr-12 text-xs leading-5 text-uploy-primary">
         <p>{activeProject.systemPrompt}</p>
@@ -187,6 +190,10 @@ function SystemPromptPanel() {
       className="flex min-h-32 flex-col rounded-lg bg-uploy-tertiary p-3"
       onSubmit={(event) => {
         event.preventDefault();
+        if (!canSavePrompt) {
+          return;
+        }
+
         saveSystemPrompt(draft);
         setIsEditing(false);
       }}
@@ -198,18 +205,21 @@ function SystemPromptPanel() {
         value={draft}
       />
       <div className="flex items-center justify-end gap-3">
+        {hasSavedPrompt ? (
+          <button
+            className="rounded-full px-3 py-1.5 text-xs leading-4 text-uploy-primary transition hover:bg-uploy-line"
+            onClick={() => {
+              setDraft(activeProject.systemPrompt);
+              setIsEditing(false);
+            }}
+            type="button"
+          >
+            Cancelar
+          </button>
+        ) : null}
         <button
-          className="rounded-full px-3 py-1.5 text-xs leading-4 text-uploy-primary transition hover:bg-uploy-line"
-          onClick={() => {
-            setDraft(activeProject.systemPrompt);
-            setIsEditing(false);
-          }}
-          type="button"
-        >
-          Cancelar
-        </button>
-        <button
-          className="rounded-full bg-[linear-gradient(139deg,rgba(124,92,252,.8)_30%,rgba(168,156,255,.8)_75%,rgba(88,184,200,.8)_95%)] px-4 py-1.5 text-xs leading-4 text-white transition hover:brightness-110"
+          className="rounded-full bg-[linear-gradient(139deg,rgba(124,92,252,.8)_30%,rgba(168,156,255,.8)_75%,rgba(88,184,200,.8)_95%)] px-4 py-1.5 text-xs leading-4 text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45"
+          disabled={!canSavePrompt}
           type="submit"
         >
           Guardar
