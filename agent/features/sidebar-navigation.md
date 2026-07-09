@@ -41,14 +41,14 @@ El historial cambia segun contexto:
 ### Crear proyecto
 
 - Evento: submit del modal.
-- Decision: el boton esta disabled si `name.trim()` esta vacio.
+- Decision: el boton esta disabled si `name.trim()` esta vacio; si hay nombre, llama `POST /api/chat/projects`.
 - Datos: nuevo `ChatProject` al inicio de `projects`.
-- Desenlace: modal cierra y ruta cambia a `/projects/{id}`.
+- Desenlace: el JSON se actualiza, modal cierra y ruta cambia a `/projects/{id}`.
 
 ### Seleccionar proyecto
 
 - Evento: click en item de `PROJECTS`.
-- Decision: llamar `selectProject(project.id)`.
+- Decision: llamar `selectProject(project.id)` y refrescar detalle con `GET /api/chat/projects/[projectId]`.
 - Datos: `activeProjectId`.
 - Desenlace: item queda activo mientras `mode !== home`.
 

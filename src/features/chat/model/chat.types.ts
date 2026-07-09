@@ -59,6 +59,13 @@ export type ChatState = {
   globalChats: ChatThread[];
 };
 
+export type ChatApiData = {
+  defaultModel: string;
+  modelOptions: string[];
+  projectTabs: ProjectTab[];
+  state: ChatState;
+};
+
 export type ChatRouteState = {
   mode: WorkspaceMode;
   activeProjectId?: string | null;
@@ -75,4 +82,11 @@ export type ProjectTab = {
 export type SendMessageInput = {
   content: string;
   files?: File[];
+};
+
+export type MockFilePayload = {
+  lastModified?: number;
+  name: string;
+  size: number;
+  type?: string;
 };

@@ -2,7 +2,7 @@
 
 import { MoreHorizontal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { modelOptions } from "../../model/chat.mock";
+import { useChat } from "../../model/ChatProvider";
 import type { ChatThread } from "../../model/chat.types";
 
 type ChatRowProps = {
@@ -18,6 +18,7 @@ export function ChatRow({
   onSelect,
   withDivider,
 }: ChatRowProps) {
+  const { modelOptions } = useChat();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [menuPlacement, setMenuPlacement] = useState<"top" | "bottom">("bottom");
   const actionRef = useRef<HTMLDivElement>(null);

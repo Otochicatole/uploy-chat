@@ -2,9 +2,11 @@
 
 ## Fuente de verdad
 
-`ChatProvider` mantiene un `ChatState` en React state y expone acciones via Context. Tambien guarda una copia mutable en `stateRef` para que timers y callbacks async no trabajen con closures viejas.
+`ChatProvider` mantiene un `ChatState` en React state y expone acciones via Context. Tambien guarda una copia mutable en `stateRef` para que callbacks async no trabajen con closures viejas.
 
-El estado persistente se guarda completo en `localStorage` bajo `uploy-chat-state-v1`.
+La fuente persistente es `src/features/chat/api/db/chat-db.json`. Los route handlers leen y escriben ese archivo mediante `src/features/chat/api/server/chat-db.ts`.
+
+El cliente mantiene una cache en memoria del ultimo `ChatApiData` dentro de `src/features/chat/api/client/chat-api.ts`. Esa cache no persiste entre reloads; solo evita parpadeos cuando Next remonta `ChatProvider` durante navegacion interna.
 
 ## Entidades principales
 
@@ -75,20 +77,24 @@ Hoy no guarda contenido real del archivo, solo metadata.
 - `activeThread`: conversacion activa global o de proyecto.
 - `sidebarHistory`: chats del proyecto activo o `globalChats`.
 - `isResponding`: true si `activeThread` tiene mensajes `loading`.
+- `modelOptions`, `projectTabs` y `defaultModel`: vienen del bootstrap de la API mock.
 
 ## Persistencia
 
 Lectura:
 
-1. En render inicial se usa `initialChatState` reconciliado con la ruta.
-2. En `useEffect`, se lee `localStorage`.
-3. Si el JSON es valido y contiene `projects` como array, se usa.
-4. Los mensajes `loading` persistidos se convierten en respuestas completas con `settleLoadingMessages`.
+1. En render inicial se usa la cache en memoria si existe; si no, estado vacio/fallback reconciliado con la ruta.
+2. En `useEffect`, el cliente llama `GET /api/chat/state`.
+3. El route handler lee `chat-db.json`.
+4. `chat-api.ts` actualiza la cache en memoria.
+5. `ChatProvider` aplica `routeToState` con la data recibida.
 
 Escritura:
 
-- `commitState` actualiza `stateRef`, `useState` y, cuando ya paso bootstrap, `localStorage`.
-- Otro `useEffect` tambien escribe cuando cambia `state` despues de bootstrap.
+- Las mutaciones del usuario llaman endpoints API mock.
+- Los endpoints usan `mutateChatDb` para leer, modificar y escribir `chat-db.json`.
+- `chat-api.ts` actualiza la cache en memoria con la respuesta.
+- `ChatProvider` aplica la respuesta del endpoint al estado local.
 
 ## Identificadores
 
@@ -98,20 +104,22 @@ Los ids se generan con:
 `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`
 ```
 
-No hay ids deterministas ni backend.
+No hay ids deterministas ni base real; los ids se generan en la capa mock server.
 
 ## Reglas de truncado
 
 - Titulos: maximo 58 caracteres; si excede, usa primeros 55 + `...`.
 - Preview: maximo 86 caracteres; si excede, usa primeros 83 + `...`.
 
-## Archivos mock
+## Archivos mock/API
 
-`chat.mock.ts` contiene:
+La fuente activa es `src/features/chat/api/db/chat-db.json`. Contiene:
 
-- `projectTabs`.
-- Opciones de modelo mock antiguas.
-- Respuestas lorem.
-- `initialChatState` con chats y proyectos precargados.
+- `projectTabs`
+- `modelOptions`
+- `assistantResponses`
+- `selectedModel`
+- `projects`
+- `globalChats`
 
-Nota: `ModelSelect` y el menu de modelo por chat leen sus opciones desde `chat.mock.ts`.
+No debe existir otro mock paralelo para estos datos; `chat-db.json` es la fuente activa.

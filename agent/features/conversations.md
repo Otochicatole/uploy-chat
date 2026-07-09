@@ -26,7 +26,7 @@ Los mensajes de usuario usan `content`. Los mensajes del asistente usan `blocks`
 ### Mostrar loading del asistente
 
 - Evento: un mensaje tiene `status = loading`.
-- Decision: `AssistantMessage` no renderiza texto.
+- Decision: `AssistantMessage` no renderiza texto. Hoy la API mock devuelve respuestas completas, asi que este estado queda como soporte visual legacy.
 - Datos: `ChatMessage.status`.
 - Desenlace: aparece punto con gradiente y animacion pulse.
 
@@ -47,9 +47,9 @@ Los mensajes de usuario usan `content`. Los mensajes del asistente usan `blocks`
 ### Guardar edicion
 
 - Evento: submit del formulario de edicion.
-- Decision: `editUserMessage` ignora contenido vacio y solo modifica mensajes `role = user`.
+- Decision: `editUserMessage` llama `PATCH /api/chat/messages/[messageId]`; el endpoint rechaza contenido vacio y solo modifica mensajes `role = user`.
 - Datos: thread afectado.
-- Desenlace: reemplaza el mensaje, elimina mensajes posteriores, agrega loading y agenda respuesta mock.
+- Desenlace: reemplaza el mensaje, elimina mensajes posteriores, agrega respuesta mock completa y guarda el JSON.
 
 ### Copiar visual
 
@@ -69,4 +69,4 @@ Los mensajes de usuario usan `content`. Los mensajes del asistente usan `blocks`
 
 - Para implementar copiar real, usar `navigator.clipboard.writeText` y decidir que texto copiar para asistente con multiples `blocks`.
 - Para branching real, se necesita modelar ramas en `ChatThread`.
-- Para editar respuestas del asistente, agregar accion en `ChatProvider`.
+- Para editar respuestas del asistente, agregar endpoint de dominio/API y accion en `ChatProvider`.

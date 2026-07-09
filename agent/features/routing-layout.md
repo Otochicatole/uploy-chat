@@ -40,14 +40,14 @@ Esta feature conecta URLs con el estado inicial del chat. Las paginas de Next no
 ### Abrir chat global
 
 - Evento: usuario navega a `/chats/[chatId]`.
-- Decision: `activeProjectId = null`; `ChatProvider` busca el chat en `globalChats` y luego en proyectos como fallback.
+- Decision: `activeProjectId = null`; despues del bootstrap de `/api/chat/state`, `ChatProvider` busca el chat en `globalChats` y luego en proyectos como fallback.
 - Datos: `activeChatId`.
 - Desenlace: si existe, se muestra conversacion; si no, cae a home.
 
 ### Abrir proyecto
 
 - Evento: usuario navega a `/projects/[projectId]`.
-- Decision: tab inicial `chat`.
+- Decision: tab inicial `chat`; la data inicial viene de `/api/chat/state`.
 - Datos: `activeProjectId`, `projectTab`.
 - Desenlace: se muestra workspace de proyecto y sus chats.
 

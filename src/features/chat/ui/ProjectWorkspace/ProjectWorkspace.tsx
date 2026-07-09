@@ -3,7 +3,6 @@
 import { FileText, Pencil, Plus, Trash2 } from "lucide-react";
 import type { ChangeEvent } from "react";
 import { useRef, useState } from "react";
-import { projectTabs } from "../../model/chat.mock";
 import { useChat } from "../../model/ChatProvider";
 import type { ProjectSource, ProjectTabId } from "../../model/chat.types";
 import { ChatHeader } from "../ChatHeader/ChatHeader";
@@ -18,7 +17,8 @@ const sourceToneClassName: Record<ProjectSource["tone"], string> = {
 };
 
 export function ProjectWorkspace() {
-  const { activeProject, projectTab, selectChat, setProjectTab } = useChat();
+  const { activeProject, projectTab, projectTabs, selectChat, setProjectTab } =
+    useChat();
 
   if (!activeProject) {
     return null;

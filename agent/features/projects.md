@@ -6,7 +6,7 @@
 - `src/features/chat/ui/ChatHeader/ChatHeader.tsx`
 - `src/features/chat/ui/Tabs/Tabs.tsx`
 - `src/features/chat/ui/CreateProjectModal/CreateProjectModal.tsx`
-- Acciones de proyecto en `ChatProvider.tsx`
+- Acciones de proyecto en `ChatProvider.tsx` y endpoints `/api/chat/projects*`
 
 ## Responsabilidad
 
@@ -21,9 +21,9 @@ Agrupa conversaciones, fuentes y system prompt bajo un proyecto. El workspace de
 ### Crear proyecto
 
 - Evento: `CreateProjectModal` envia nombre.
-- Decision: nombre vacio no se acepta.
+- Decision: llama `POST /api/chat/projects`; nombre vacio no se acepta.
 - Datos: `projects`.
-- Desenlace: proyecto nuevo aparece primero y queda activo.
+- Desenlace: proyecto nuevo se guarda en `chat-db.json`, aparece primero y queda activo.
 
 ### Entrar al workspace de proyecto
 
@@ -42,21 +42,21 @@ Agrupa conversaciones, fuentes y system prompt bajo un proyecto. El workspace de
 ### Cambiar modelo desde una fila
 
 - Evento: hover sobre un chat y click en tres puntos.
-- Decision: reemplaza visualmente la fecha por el boton de acciones y abre un dropdown con modelos del mock principal. El menu calcula si debe abrir hacia abajo o hacia arriba segun el espacio disponible en viewport.
+- Decision: reemplaza visualmente la fecha por el boton de acciones y abre un dropdown con modelos de la API mock. El menu calcula si debe abrir hacia abajo o hacia arriba segun el espacio disponible en viewport.
 - Datos: `ChatThread.selectedModel`.
 - Desenlace: el chat queda asociado al modelo elegido.
 
 ### Enviar mensaje desde proyecto
 
 - Evento: submit de `PromptInput` mientras `activeProjectId` existe y `mode !== home`.
-- Decision: el thread destino pertenece al proyecto activo.
+- Decision: `POST /api/chat/messages` guarda el thread dentro del proyecto activo.
 - Datos: `activeProject.chats`, `activeProject.sources` si hay archivos.
 - Desenlace: crea/actualiza chat de proyecto y navega a `/projects/{projectId}/chats/{chatId}`.
 
 ### Menu de header
 
 - Evento: click en boton more del header.
-- Decision: abre un dropdown con `modelOptions` del mock principal y calcula si debe abrir hacia abajo o hacia arriba segun el espacio disponible.
+- Decision: abre un dropdown con `modelOptions` de la API mock y calcula si debe abrir hacia abajo o hacia arriba segun el espacio disponible.
 - Datos: estado local `isMenuOpen`, `selectedModel`.
 - Desenlace: al elegir modelo actualiza el modelo global activo y cierra el menu.
 
@@ -67,7 +67,7 @@ Agrupa conversaciones, fuentes y system prompt bajo un proyecto. El workspace de
 - Los chats de proyecto llevan `projectId`.
 - Los chats pueden llevar `selectedModel`; si no lo tienen, usan el modelo global actual como fallback.
 - El menu de modelo por fila tiene altura maxima y scroll para evitar que quede cortado.
-- El menu de tres puntos del header tambien muestra modelos del mock principal y actualiza el selector del input.
+- El menu de tres puntos del header tambien muestra modelos de la API mock y actualiza el selector del input.
 
 ## Notas para cambios
 

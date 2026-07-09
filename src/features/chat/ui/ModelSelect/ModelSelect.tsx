@@ -3,14 +3,13 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useChat } from "../../model/ChatProvider";
-import { modelOptions } from "../../model/chat.mock";
 
 type ModelSelectProps = {
   label: string;
 };
 
 export function ModelSelect({ label }: ModelSelectProps) {
-  const { selectedModel, setSelectedModel } = useChat();
+  const { modelOptions, selectedModel, setSelectedModel } = useChat();
   const [isOpen, setIsOpen] = useState(false);
   const [placement, setPlacement] = useState<"top" | "bottom">("top");
   const containerRef = useRef<HTMLDivElement>(null);

@@ -32,7 +32,7 @@ Contiene piezas visuales reutilizables y tokens globales.
 
 - Evento: `ModelSelect`, `ChatRow` o `ChatHeader` abren un menu de modelos.
 - Decision: calculan el espacio disponible con `getBoundingClientRect` y el alto del menu para elegir apertura hacia arriba o hacia abajo.
-- Datos: estado local de placement y opciones `modelOptions`.
+- Datos: estado local de placement y opciones `modelOptions` recibidas desde la API mock.
 - Desenlace: el dropdown queda dentro del viewport con altura maxima y scroll cuando no hay espacio suficiente.
 
 ### Menu dropdown generico

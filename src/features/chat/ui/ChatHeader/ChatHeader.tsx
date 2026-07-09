@@ -3,7 +3,6 @@
 import { IconButton } from "@/shared/ui/IconButton/IconButton";
 import { Folder } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { modelOptions } from "../../model/chat.mock";
 import { useChat } from "../../model/ChatProvider";
 
 type ChatHeaderProps = {
@@ -11,7 +10,7 @@ type ChatHeaderProps = {
 };
 
 export function ChatHeader({ title }: ChatHeaderProps) {
-  const { selectedModel, setSelectedModel } = useChat();
+  const { modelOptions, selectedModel, setSelectedModel } = useChat();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [menuPlacement, setMenuPlacement] = useState<"top" | "bottom">("bottom");
   const menuRef = useRef<HTMLDivElement>(null);

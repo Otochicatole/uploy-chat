@@ -10,7 +10,7 @@
 
 Permite editar instrucciones de sistema por proyecto.
 
-Hoy el system prompt se guarda en estado local, pero no modifica las respuestas mock del asistente.
+Hoy el system prompt se guarda en `chat-db.json`, pero todavia no modifica las respuestas mock del asistente.
 
 ## EDD
 
@@ -24,9 +24,9 @@ Hoy el system prompt se guarda en estado local, pero no modifica las respuestas 
 ### Guardar prompt
 
 - Evento: submit del formulario.
-- Decision: no guarda si `draft.trim().length === 0`.
+- Decision: no guarda si `draft.trim().length === 0`; si hay contenido, llama `PATCH /api/chat/projects/[projectId]`.
 - Datos: `activeProject.systemPrompt`.
-- Desenlace: si guarda, cambia a modo lectura.
+- Desenlace: se escribe `chat-db.json` y cambia a modo lectura.
 
 ### Editar prompt existente
 
@@ -50,5 +50,5 @@ Hoy el system prompt se guarda en estado local, pero no modifica las respuestas 
 
 ## Notas para cambios
 
-- Para usar el prompt en respuestas reales, `sendMessage` deberia incluir `activeProject.systemPrompt` en la llamada al backend.
+- Para usar el prompt en respuestas reales, `POST /api/chat/messages` deberia incluir `activeProject.systemPrompt` en la generacion.
 - Si se necesita versionado o historial, no mutar directamente `systemPrompt`; agregar entidad propia.

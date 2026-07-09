@@ -9,17 +9,17 @@ Esta guia resume los comportamientos globales. Ver `features/` para detalle por 
 - Datos: `mode`, `activeProjectId`, `activeChatId`, `projectTab`, `selectedModel`.
 - Desenlace: se muestra home, proyecto o conversacion. Si la ruta apunta a un id inexistente, cae a `home`.
 
-## EDD-002 - Bootstrap desde localStorage
+## EDD-002 - Bootstrap desde API mock
 
 - Evento: `ChatProvider` monta en cliente.
-- Decision: si `localStorage` contiene JSON valido con `projects` array, se usa; si no, se usa `initialChatState`.
-- Datos: estado completo `ChatState`.
-- Desenlace: la UI puede cambiar despues del primer tick para reflejar estado persistido.
+- Decision: llama `GET /api/chat/state`; si la ruta apunta a proyecto/chat existente, `routeToState` lo activa.
+- Datos: `ChatApiData` desde `chat-db.json`.
+- Desenlace: la UI se hidrata con proyectos, chats, tabs y modelos del JSON mock.
 
 ## EDD-003 - Crear proyecto
 
 - Evento: submit del modal `CreateProjectModal`.
-- Decision: nombre vacio no crea; nombre con texto se trimea.
+- Decision: llama `POST /api/chat/projects`; nombre vacio devuelve error.
 - Datos: se agrega un `ChatProject` al inicio de `projects`.
 - Desenlace: `mode = project`, `activeProjectId = nuevo id`, `activeChatId = null`, `projectTab = chat`, ruta `/projects/{projectId}`.
 
@@ -47,23 +47,23 @@ Esta guia resume los comportamientos globales. Ver `features/` para detalle por 
 ## EDD-007 - Enviar mensaje
 
 - Evento: submit de `PromptInput`.
-- Decision: si no hay texto ni archivos, no hace nada. Si hay archivos sin texto, el contenido sera `Files added as context`.
-- Datos: crea mensaje de usuario, mensaje asistente `loading`, attachments y fuentes si esta dentro de proyecto.
-- Desenlace: crea o actualiza chat, navega a la conversacion y agenda respuesta mock a 950 ms.
+- Decision: llama `POST /api/chat/messages`; si no hay texto ni archivos, el endpoint rechaza. Si hay archivos sin texto, el contenido sera `Files added as context`.
+- Datos: crea mensaje de usuario, respuesta asistente completa, attachments y fuentes si esta dentro de proyecto.
+- Desenlace: el endpoint escribe `chat-db.json`, devuelve el thread actualizado y la UI navega a la conversacion.
 
-## EDD-008 - Resolver respuesta del asistente
+## EDD-008 - Resolver respuesta del asistente mock
 
-- Evento: timer iniciado por `queueAssistantResponse`.
-- Decision: busca cualquier mensaje con id `loadingMessageId` en todos los threads.
-- Datos: reemplaza el mensaje `loading` por un mensaje de asistente completo.
-- Desenlace: desaparece el pulso de carga y aparece contenido lorem.
+- Evento: `POST /api/chat/messages` o `PATCH /api/chat/messages/[messageId]`.
+- Decision: el server usa `assistantResponses` del JSON y arma uno o dos bloques segun largo del texto.
+- Datos: `ChatMessage` de rol `assistant`.
+- Desenlace: la respuesta ya vuelve guardada en el historial.
 
 ## EDD-009 - Editar mensaje de usuario
 
 - Evento: submit de tarjeta de edicion en `ConversationWorkspace`.
-- Decision: contenido vacio no edita. Si encuentra el mensaje, corta la conversacion desde ese mensaje.
-- Datos: reemplaza el mensaje de usuario, descarta mensajes posteriores y agrega un nuevo asistente `loading`.
-- Desenlace: se regenera respuesta mock con timer.
+- Decision: llama `PATCH /api/chat/messages/[messageId]`; contenido vacio devuelve error. Si encuentra el mensaje, corta la conversacion desde ese mensaje.
+- Datos: reemplaza el mensaje de usuario, descarta mensajes posteriores y agrega respuesta asistente completa.
+- Desenlace: se guarda el thread actualizado en `chat-db.json`.
 
 ## EDD-010 - Cambiar tab de proyecto
 
@@ -96,7 +96,7 @@ Esta guia resume los comportamientos globales. Ver `features/` para detalle por 
 ## EDD-014 - Cambiar modelo
 
 - Evento: click en una opcion de `ModelSelect`.
-- Decision: antes de abrir calcula si hay espacio suficiente arriba; si no, abre hacia abajo. Al elegir opcion, guarda cualquier string recibido; si hay chat activo, tambien lo guarda en ese `ChatThread`.
+- Decision: antes de abrir calcula si hay espacio suficiente arriba; si no, abre hacia abajo. Al elegir opcion, llama `PATCH /api/chat/models`; si hay chat activo, tambien lo guarda en ese `ChatThread`.
 - Datos: `selectedModel` global y `activeThread.selectedModel` cuando corresponde.
 - Desenlace: actualiza el texto del selector y reemplaza `?model=` en la URL actual.
 
@@ -110,6 +110,6 @@ Esta guia resume los comportamientos globales. Ver `features/` para detalle por 
 ## EDD-016 - Cambiar modelo desde listado de chats
 
 - Evento: hover sobre una fila de chat y click en el boton de tres puntos.
-- Decision: la fecha se oculta durante hover/menu y se muestra un dropdown con `modelOptions` del mock principal. Antes de abrir calcula si hay espacio abajo; si no, abre hacia arriba.
+- Decision: la fecha se oculta durante hover/menu y se muestra un dropdown con `modelOptions` de la API mock. Antes de abrir calcula si hay espacio abajo; si no, abre hacia arriba.
 - Datos: `ChatThread.selectedModel`.
 - Desenlace: el modelo queda persistido para ese chat; si el chat esta activo, tambien sincroniza `selectedModel` y `?model=`.

@@ -4,7 +4,7 @@
 
 - `src/features/chat/ui/ProjectWorkspace/ProjectWorkspace.tsx`
 - Tipo `ProjectSource` en `chat.types.ts`
-- Helpers `fileToSource`, `inferFileType`, `formatFileSize` en `ChatProvider.tsx`
+- Helpers `fileToSource`, `inferFileType`, `formatFileSize` en `src/features/chat/api/server/chat-domain.ts`
 
 ## Responsabilidad
 
@@ -27,23 +27,23 @@ Hay dos formas de sumar fuentes:
 ### Agregar fuentes desde tab
 
 - Evento: input file emite `change`.
-- Decision: convierte `File[]` a `ProjectSource[]`; si no hay proyecto activo, no cambia nada.
+- Decision: el cliente serializa metadata de `File[]` y llama `POST /api/chat/projects/[projectId]/sources`.
 - Datos: `activeProject.sources`.
-- Desenlace: fuentes nuevas aparecen al inicio de la lista.
+- Desenlace: fuentes nuevas se guardan en `chat-db.json` y aparecen al inicio de la lista.
 
 ### Agregar fuentes desde mensaje
 
 - Evento: enviar prompt con archivos dentro de proyecto.
-- Decision: `sendMessage` mapea cada archivo a attachment del mensaje y source del proyecto.
+- Decision: `POST /api/chat/messages` mapea cada archivo a attachment del mensaje y source del proyecto.
 - Datos: `messages[].attachments` y `activeProject.sources`.
 - Desenlace: el chat muestra attachments y el proyecto acumula sources.
 
 ### Quitar fuente
 
 - Evento: click en trash de una fuente.
-- Decision: filtra por `source.id`.
+- Decision: llama `DELETE /api/chat/projects/[projectId]/sources?sourceId=...`.
 - Datos: `activeProject.sources`.
-- Desenlace: fuente desaparece.
+- Desenlace: fuente se borra de `chat-db.json` y desaparece.
 
 ## Reglas importantes
 
@@ -55,6 +55,6 @@ Hay dos formas de sumar fuentes:
 
 ## Notas para cambios
 
-- Si se implementa backend, `ProjectSource` necesita id externo, estado de upload y posiblemente URL.
+- Si se implementa backend real, `ProjectSource` necesita id externo, estado de upload y posiblemente URL.
 - Si se requiere eliminar attachments ya enviados, eso es otra entidad distinta a `ProjectSource`.
 - Si se quiere evitar duplicados en sources, hoy no hay deduplicacion en `addSourcesToActiveProject`.

@@ -1,0 +1,227 @@
+{
+  "defaultModel": "Model",
+  "modelOptions": [
+    "GPT-4.1",
+    "Claude Sonnet",
+    "Uploy Analyst"
+  ],
+  "projectTabs": [
+    {
+      "id": "chat",
+      "label": "Chat"
+    },
+    {
+      "id": "sources",
+      "label": "Sources"
+    },
+    {
+      "id": "system-prompt",
+      "label": "System prompt"
+    }
+  ],
+  "assistantResponses": {
+    "long": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus. Quisque quis nulla in velit congue feugiat nec at eros. Aliquam in est non tortor elementum hendrerit. Vestibulum efficitur imperdiet ultricies. In auctor bibendum felis vitae feugiat. Fusce et metus nisl. Nulla faucibus neque id odio malesuada aliquet. Sed et metus luctus, blandit mi ac, venenatis mauris. Suspendisse ante urna, sagittis nec lectus sit amet, placerat euismod elit. Aliquam sollicitudin nisl ligula, et dignissim justo commodo id. Sed lorem leo, congue eu lectus eget, blandit pulvinar tortor. Integer tincidunt lacinia congue. In hac habitasse platea dictumst. Cras tincidunt nibh mi, facilisis egestas metus commodo vitae.",
+    "short": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus. Quisque quis nulla in velit congue feugiat nec at eros."
+  },
+  "mode": "conversation",
+  "activeProjectId": "project-uploy-2",
+  "activeChatId": "project-chat-1",
+  "projectTab": "chat",
+  "selectedModel": "Uploy Analyst",
+  "globalChats": [
+    {
+      "id": "chat-1783618551580-2aa3caf047d518",
+      "title": "holasd",
+      "preview": "holasd",
+      "updatedAtLabel": "Ahora",
+      "selectedModel": "Model",
+      "messages": [
+        {
+          "id": "user-1783618551580-ccb15b8304bc2",
+          "role": "user",
+          "content": "holasd",
+          "attachments": [],
+          "status": "complete",
+          "createdAtLabel": "Ahora"
+        },
+        {
+          "id": "assistant-1783618551580-9e315299f30328",
+          "role": "assistant",
+          "blocks": [
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus. Quisque quis nulla in velit congue feugiat nec at eros. Aliquam in est non tortor elementum hendrerit. Vestibulum efficitur imperdiet ultricies. In auctor bibendum felis vitae feugiat. Fusce et metus nisl. Nulla faucibus neque id odio malesuada aliquet. Sed et metus luctus, blandit mi ac, venenatis mauris. Suspendisse ante urna, sagittis nec lectus sit amet, placerat euismod elit. Aliquam sollicitudin nisl ligula, et dignissim justo commodo id. Sed lorem leo, congue eu lectus eget, blandit pulvinar tortor. Integer tincidunt lacinia congue. In hac habitasse platea dictumst. Cras tincidunt nibh mi, facilisis egestas metus commodo vitae."
+          ],
+          "status": "complete",
+          "createdAtLabel": "Thought for 20s"
+        }
+      ]
+    },
+    {
+      "id": "global-chat-1",
+      "title": "Lorem ipsum dolor sit amet",
+      "preview": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "updatedAtLabel": "17 jun",
+      "selectedModel": "GPT-4.1",
+      "messages": [
+        {
+          "id": "global-user-1",
+          "role": "user",
+          "content": "Lorem ipsum dolor sit amet",
+          "status": "complete",
+          "createdAtLabel": "Ahora"
+        },
+        {
+          "id": "global-assistant-1",
+          "role": "assistant",
+          "blocks": [
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus. Quisque quis nulla in velit congue feugiat nec at eros. Aliquam in est non tortor elementum hendrerit. Vestibulum efficitur imperdiet ultricies. In auctor bibendum felis vitae feugiat. Fusce et metus nisl. Nulla faucibus neque id odio malesuada aliquet. Sed et metus luctus, blandit mi ac, venenatis mauris. Suspendisse ante urna, sagittis nec lectus sit amet, placerat euismod elit. Aliquam sollicitudin nisl ligula, et dignissim justo commodo id. Sed lorem leo, congue eu lectus eget, blandit pulvinar tortor. Integer tincidunt lacinia congue. In hac habitasse platea dictumst. Cras tincidunt nibh mi, facilisis egestas metus commodo vitae."
+          ],
+          "status": "complete",
+          "createdAtLabel": "Thought for 20s"
+        }
+      ]
+    },
+    {
+      "id": "global-chat-2",
+      "title": "Lorem ipsum dolor sit amet, cons...",
+      "preview": "Donec imperdiet finibus ante et tempus.",
+      "updatedAtLabel": "17 jun",
+      "selectedModel": "Claude Sonnet",
+      "messages": [
+        {
+          "id": "global-user-2",
+          "role": "user",
+          "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit?",
+          "status": "complete",
+          "createdAtLabel": "Ahora"
+        },
+        {
+          "id": "global-assistant-2",
+          "role": "assistant",
+          "blocks": [
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus. Quisque quis nulla in velit congue feugiat nec at eros.",
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus. Quisque quis nulla in velit congue feugiat nec at eros."
+          ],
+          "status": "complete",
+          "createdAtLabel": "Thought for 20s"
+        }
+      ]
+    },
+    {
+      "id": "global-chat-3",
+      "title": "In auctor bibendum felis fesa de...",
+      "preview": "Fusce et metus nisl. Nulla faucibus neque id odio.",
+      "updatedAtLabel": "17 jun",
+      "selectedModel": "Uploy Analyst",
+      "messages": []
+    }
+  ],
+  "projects": [
+    {
+      "id": "project-uploy-2",
+      "name": "Uploy 2.0",
+      "systemPrompt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus. Quisque quis nulla in velit congue feugiat nec at eros. Aliquam in est non tortor elementum hendrerit. Vestibulum efficitur imperdiet ultricies. In auctor bibendum felis vitae feugiat. Fusce et metus nisl. Nulla faucibus neque id odio malesuada aliquet. Sed et metus luctus, blandit mi ac, venenatis mauris. Suspendisse ante urna, sagittis nec lectus sit amet, placerat euismod elit. Aliquam sollicitudin nisl ligula, et dignissim justo commodo id. Sed lorem leo, congue eu lectus eget, blandit pulvinar tortor. Integer tincidunt lacinia congue. In hac habitasse platea dictumst. Cras tincidunt nibh mi, facilisis egestas metus commodo vitae.",
+      "sources": [
+        {
+          "id": "source-uploy-presentation",
+          "name": "Presentacion de Uploy.doc",
+          "fileType": "Document",
+          "uploadedAtLabel": "18 jun",
+          "tone": "blue"
+        },
+        {
+          "id": "source-uploy-bases",
+          "name": "Bases de Uploy.pdf",
+          "fileType": "PDF",
+          "uploadedAtLabel": "18 jun",
+          "tone": "red"
+        }
+      ],
+      "chats": [
+        {
+          "id": "project-chat-1",
+          "projectId": "project-uploy-2",
+          "title": "Lorem ipsum dolor sit amet asdasdsad",
+          "preview": "Lorem ipsum dolor sit amet asdasdsad",
+          "updatedAtLabel": "Ahora",
+          "selectedModel": "GPT-4.1",
+          "messages": [
+            {
+              "id": "project-user-1",
+              "role": "user",
+              "content": "Lorem ipsum dolor sit amet asdasdsad",
+              "status": "complete",
+              "createdAtLabel": "Ahora"
+            },
+            {
+              "id": "assistant-1783619064383-b64752b45753b",
+              "role": "assistant",
+              "blocks": [
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus. Quisque quis nulla in velit congue feugiat nec at eros. Aliquam in est non tortor elementum hendrerit. Vestibulum efficitur imperdiet ultricies. In auctor bibendum felis vitae feugiat. Fusce et metus nisl. Nulla faucibus neque id odio malesuada aliquet. Sed et metus luctus, blandit mi ac, venenatis mauris. Suspendisse ante urna, sagittis nec lectus sit amet, placerat euismod elit. Aliquam sollicitudin nisl ligula, et dignissim justo commodo id. Sed lorem leo, congue eu lectus eget, blandit pulvinar tortor. Integer tincidunt lacinia congue. In hac habitasse platea dictumst. Cras tincidunt nibh mi, facilisis egestas metus commodo vitae."
+              ],
+              "status": "complete",
+              "createdAtLabel": "Thought for 20s"
+            }
+          ]
+        },
+        {
+          "id": "project-chat-2",
+          "projectId": "project-uploy-2",
+          "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+          "preview": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus.",
+          "updatedAtLabel": "17 jun",
+          "selectedModel": "Claude Sonnet",
+          "messages": []
+        }
+      ]
+    },
+    {
+      "id": "project-uploy",
+      "name": "Uploy",
+      "systemPrompt": "",
+      "sources": [],
+      "chats": []
+    },
+    {
+      "id": "project-vl",
+      "name": "VL",
+      "systemPrompt": "",
+      "sources": [],
+      "chats": [
+        {
+          "id": "chat-1783618733167-60cfdbcd839c18",
+          "projectId": "project-vl",
+          "title": "test",
+          "preview": "test",
+          "updatedAtLabel": "Ahora",
+          "selectedModel": "Uploy Analyst",
+          "messages": [
+            {
+              "id": "user-1783618733167-306666ecb776b",
+              "role": "user",
+              "content": "test",
+              "attachments": [],
+              "status": "complete",
+              "createdAtLabel": "Ahora"
+            },
+            {
+              "id": "assistant-1783618733167-b6683006e706c8",
+              "role": "assistant",
+              "blocks": [
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus. Quisque quis nulla in velit congue feugiat nec at eros. Aliquam in est non tortor elementum hendrerit. Vestibulum efficitur imperdiet ultricies. In auctor bibendum felis vitae feugiat. Fusce et metus nisl. Nulla faucibus neque id odio malesuada aliquet. Sed et metus luctus, blandit mi ac, venenatis mauris. Suspendisse ante urna, sagittis nec lectus sit amet, placerat euismod elit. Aliquam sollicitudin nisl ligula, et dignissim justo commodo id. Sed lorem leo, congue eu lectus eget, blandit pulvinar tortor. Integer tincidunt lacinia congue. In hac habitasse platea dictumst. Cras tincidunt nibh mi, facilisis egestas metus commodo vitae."
+              ],
+              "status": "complete",
+              "createdAtLabel": "Thought for 20s"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "project-superbird",
+      "name": "Superbird",
+      "systemPrompt": "",
+      "sources": [],
+      "chats": []
+    }
+  ]
+}
