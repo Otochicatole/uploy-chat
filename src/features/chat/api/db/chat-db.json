@@ -24,28 +24,62 @@
     "short": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus. Quisque quis nulla in velit congue feugiat nec at eros."
   },
   "mode": "conversation",
-  "activeProjectId": "project-uploy-2",
-  "activeChatId": "project-chat-1",
+  "activeProjectId": null,
+  "activeChatId": "chat-1783618551580-2aa3caf047d518",
   "projectTab": "chat",
-  "selectedModel": "Uploy Analyst",
+  "selectedModel": "Model",
   "globalChats": [
     {
       "id": "chat-1783618551580-2aa3caf047d518",
-      "title": "holasd",
-      "preview": "holasd",
+      "title": "asdadas asdasd",
+      "preview": "asdadas asdasd",
       "updatedAtLabel": "Ahora",
       "selectedModel": "Model",
       "messages": [
         {
           "id": "user-1783618551580-ccb15b8304bc2",
           "role": "user",
-          "content": "holasd",
+          "content": "holasd aasdasda asdasd",
           "attachments": [],
           "status": "complete",
           "createdAtLabel": "Ahora"
         },
         {
-          "id": "assistant-1783618551580-9e315299f30328",
+          "id": "assistant-1783621140862-3bc2674e0e06f",
+          "role": "assistant",
+          "blocks": [
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus. Quisque quis nulla in velit congue feugiat nec at eros. Aliquam in est non tortor elementum hendrerit. Vestibulum efficitur imperdiet ultricies. In auctor bibendum felis vitae feugiat. Fusce et metus nisl. Nulla faucibus neque id odio malesuada aliquet. Sed et metus luctus, blandit mi ac, venenatis mauris. Suspendisse ante urna, sagittis nec lectus sit amet, placerat euismod elit. Aliquam sollicitudin nisl ligula, et dignissim justo commodo id. Sed lorem leo, congue eu lectus eget, blandit pulvinar tortor. Integer tincidunt lacinia congue. In hac habitasse platea dictumst. Cras tincidunt nibh mi, facilisis egestas metus commodo vitae."
+          ],
+          "status": "complete",
+          "createdAtLabel": "Thought for 20s"
+        },
+        {
+          "id": "user-1783621145077-fe9ac60c03505",
+          "role": "user",
+          "content": "asdasd",
+          "attachments": [],
+          "status": "complete",
+          "createdAtLabel": "Ahora"
+        },
+        {
+          "id": "assistant-1783621145077-dd74c430580fc",
+          "role": "assistant",
+          "blocks": [
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus. Quisque quis nulla in velit congue feugiat nec at eros. Aliquam in est non tortor elementum hendrerit. Vestibulum efficitur imperdiet ultricies. In auctor bibendum felis vitae feugiat. Fusce et metus nisl. Nulla faucibus neque id odio malesuada aliquet. Sed et metus luctus, blandit mi ac, venenatis mauris. Suspendisse ante urna, sagittis nec lectus sit amet, placerat euismod elit. Aliquam sollicitudin nisl ligula, et dignissim justo commodo id. Sed lorem leo, congue eu lectus eget, blandit pulvinar tortor. Integer tincidunt lacinia congue. In hac habitasse platea dictumst. Cras tincidunt nibh mi, facilisis egestas metus commodo vitae."
+          ],
+          "status": "complete",
+          "createdAtLabel": "Thought for 20s"
+        },
+        {
+          "id": "user-1783621147824-fbe25bb0189098",
+          "role": "user",
+          "content": "asdadas asdasd",
+          "attachments": [],
+          "status": "complete",
+          "createdAtLabel": "Ahora"
+        },
+        {
+          "id": "assistant-1783621158695-b056ef95d4501",
           "role": "assistant",
           "blocks": [
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus. Quisque quis nulla in velit congue feugiat nec at eros. Aliquam in est non tortor elementum hendrerit. Vestibulum efficitur imperdiet ultricies. In auctor bibendum felis vitae feugiat. Fusce et metus nisl. Nulla faucibus neque id odio malesuada aliquet. Sed et metus luctus, blandit mi ac, venenatis mauris. Suspendisse ante urna, sagittis nec lectus sit amet, placerat euismod elit. Aliquam sollicitudin nisl ligula, et dignissim justo commodo id. Sed lorem leo, congue eu lectus eget, blandit pulvinar tortor. Integer tincidunt lacinia congue. In hac habitasse platea dictumst. Cras tincidunt nibh mi, facilisis egestas metus commodo vitae."
@@ -117,10 +151,59 @@
   ],
   "projects": [
     {
+      "id": "project-1783619461988-7fea702e7ff96",
+      "name": "otochi",
+      "chats": [],
+      "sources": [],
+      "systemPrompt": ""
+    },
+    {
       "id": "project-uploy-2",
       "name": "Uploy 2.0",
       "systemPrompt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus. Quisque quis nulla in velit congue feugiat nec at eros. Aliquam in est non tortor elementum hendrerit. Vestibulum efficitur imperdiet ultricies. In auctor bibendum felis vitae feugiat. Fusce et metus nisl. Nulla faucibus neque id odio malesuada aliquet. Sed et metus luctus, blandit mi ac, venenatis mauris. Suspendisse ante urna, sagittis nec lectus sit amet, placerat euismod elit. Aliquam sollicitudin nisl ligula, et dignissim justo commodo id. Sed lorem leo, congue eu lectus eget, blandit pulvinar tortor. Integer tincidunt lacinia congue. In hac habitasse platea dictumst. Cras tincidunt nibh mi, facilisis egestas metus commodo vitae.",
       "sources": [
+        {
+          "id": "source-1783619275393-78c373af1d6c3",
+          "name": "80aefcd41e36d8fc95b7c418c85cd960.jpg",
+          "fileType": "JPG",
+          "uploadedAtLabel": "Ahora",
+          "tone": "blue"
+        },
+        {
+          "id": "source-1783619275393-ca647fe65cd85",
+          "name": "83e854bf617ff098cbc235fd3b385c70.jpg",
+          "fileType": "JPG",
+          "uploadedAtLabel": "Ahora",
+          "tone": "blue"
+        },
+        {
+          "id": "source-1783619275393-cfbd8afa35bfa",
+          "name": "330fe2b4db8d6b383add08f3ce269ef5.jpg",
+          "fileType": "JPG",
+          "uploadedAtLabel": "Ahora",
+          "tone": "blue"
+        },
+        {
+          "id": "source-1783619275393-d9b9c5b8c064f",
+          "name": "2131231.jpg",
+          "fileType": "JPG",
+          "uploadedAtLabel": "Ahora",
+          "tone": "blue"
+        },
+        {
+          "id": "source-1783619275393-751b8cc63f916",
+          "name": "descarga.jpg",
+          "fileType": "JPG",
+          "uploadedAtLabel": "Ahora",
+          "tone": "blue"
+        },
+        {
+          "id": "source-1783619275393-cad698cce90ff8",
+          "name": "fd890dcd6482d50a67d4bbd4aeb37edc.jpg",
+          "fileType": "JPG",
+          "uploadedAtLabel": "Ahora",
+          "tone": "blue"
+        },
         {
           "id": "source-uploy-presentation",
           "name": "Presentacion de Uploy.doc",
@@ -137,6 +220,70 @@
         }
       ],
       "chats": [
+        {
+          "id": "chat-1783619275393-a5bcdb96065f1",
+          "projectId": "project-uploy-2",
+          "title": "asd",
+          "preview": "asd",
+          "updatedAtLabel": "Ahora",
+          "selectedModel": "Uploy Analyst",
+          "messages": [
+            {
+              "id": "user-1783619275393-a3d6a03837d7c8",
+              "role": "user",
+              "content": "asd",
+              "attachments": [
+                {
+                  "id": "attachment-1783619275393-b03b5b15be849",
+                  "name": "80aefcd41e36d8fc95b7c418c85cd960.jpg",
+                  "sizeLabel": "33 KB",
+                  "typeLabel": "JPG"
+                },
+                {
+                  "id": "attachment-1783619275393-5be766bb36d81",
+                  "name": "83e854bf617ff098cbc235fd3b385c70.jpg",
+                  "sizeLabel": "53 KB",
+                  "typeLabel": "JPG"
+                },
+                {
+                  "id": "attachment-1783619275393-40a4df56f12e",
+                  "name": "330fe2b4db8d6b383add08f3ce269ef5.jpg",
+                  "sizeLabel": "100 KB",
+                  "typeLabel": "JPG"
+                },
+                {
+                  "id": "attachment-1783619275393-c29303b3a16fd8",
+                  "name": "2131231.jpg",
+                  "sizeLabel": "68 KB",
+                  "typeLabel": "JPG"
+                },
+                {
+                  "id": "attachment-1783619275393-eec4eed9e6e628",
+                  "name": "descarga.jpg",
+                  "sizeLabel": "34 KB",
+                  "typeLabel": "JPG"
+                },
+                {
+                  "id": "attachment-1783619275393-41897cdbbd0f4",
+                  "name": "fd890dcd6482d50a67d4bbd4aeb37edc.jpg",
+                  "sizeLabel": "57 KB",
+                  "typeLabel": "JPG"
+                }
+              ],
+              "status": "complete",
+              "createdAtLabel": "Ahora"
+            },
+            {
+              "id": "assistant-1783619275393-cd696348d2de28",
+              "role": "assistant",
+              "blocks": [
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus. Quisque quis nulla in velit congue feugiat nec at eros. Aliquam in est non tortor elementum hendrerit. Vestibulum efficitur imperdiet ultricies. In auctor bibendum felis vitae feugiat. Fusce et metus nisl. Nulla faucibus neque id odio malesuada aliquet. Sed et metus luctus, blandit mi ac, venenatis mauris. Suspendisse ante urna, sagittis nec lectus sit amet, placerat euismod elit. Aliquam sollicitudin nisl ligula, et dignissim justo commodo id. Sed lorem leo, congue eu lectus eget, blandit pulvinar tortor. Integer tincidunt lacinia congue. In hac habitasse platea dictumst. Cras tincidunt nibh mi, facilisis egestas metus commodo vitae."
+              ],
+              "status": "complete",
+              "createdAtLabel": "Thought for 20s"
+            }
+          ]
+        },
         {
           "id": "project-chat-1",
           "projectId": "project-uploy-2",

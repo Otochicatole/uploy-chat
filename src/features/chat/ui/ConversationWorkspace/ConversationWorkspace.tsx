@@ -9,7 +9,7 @@ import {
   Pencil,
 } from "lucide-react";
 import type { ReactNode } from "react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useChat } from "../../model/ChatProvider";
 import type { ChatMessage } from "../../model/chat.types";
 import { PromptInput } from "../PromptInput/PromptInput";
@@ -17,38 +17,59 @@ import { PromptInput } from "../PromptInput/PromptInput";
 export function ConversationWorkspace() {
   const { activeThread, editUserMessage } = useChat();
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [pendingEditMessage, setPendingEditMessage] =
+    useState<ChatMessage | null>(null);
   const [draft, setDraft] = useState("");
-
-  const editingMessage = useMemo(
-    () =>
-      activeThread?.messages.find(
-        (message) => message.id === editingMessageId,
-      ) ?? null,
-    [activeThread?.messages, editingMessageId],
-  );
 
   if (!activeThread) {
     return null;
   }
 
+  const cancelEdit = () => {
+    setEditingMessageId(null);
+    setPendingEditMessage(null);
+  };
+
+  const saveEdit = (message: ChatMessage) => {
+    const messageIndex = activeThread.messages.findIndex(
+      (item) => item.id === message.id,
+    );
+    const hasFollowingMessages =
+      messageIndex >= 0 && messageIndex < activeThread.messages.length - 1;
+
+    if (hasFollowingMessages) {
+      setPendingEditMessage(message);
+
+      return;
+    }
+
+    editUserMessage(message.id, draft);
+    cancelEdit();
+  };
+
+  const confirmPendingEdit = () => {
+    if (!pendingEditMessage) {
+      return;
+    }
+
+    editUserMessage(pendingEditMessage.id, draft);
+    cancelEdit();
+  };
+
   return (
     <div className="relative z-10 flex h-full flex-col gap-6">
       <div className="flex min-h-0 flex-1 flex-col gap-7 overflow-y-auto px-1 py-4">
-        {editingMessage ? (
-          <EditMessageCard
-            draft={draft}
-            onCancel={() => setEditingMessageId(null)}
-            onChange={setDraft}
-            onSubmit={() => {
-              editUserMessage(editingMessage.id, draft);
-              setEditingMessageId(null);
-            }}
-          />
-        ) : null}
-
         {activeThread.messages.map((message) => {
-          if (message.id === editingMessageId) {
-            return null;
+          if (message.id === editingMessageId && message.role === "user") {
+            return (
+              <EditMessageCard
+                draft={draft}
+                key={message.id}
+                onCancel={cancelEdit}
+                onChange={setDraft}
+                onSubmit={() => saveEdit(message)}
+              />
+            );
           }
 
           if (message.role === "user") {
@@ -68,7 +89,58 @@ export function ConversationWorkspace() {
         })}
       </div>
 
+      {pendingEditMessage ? (
+        <ConfirmEditModal
+          onCancel={() => setPendingEditMessage(null)}
+          onConfirm={confirmPendingEdit}
+        />
+      ) : null}
+
       <PromptInput />
+    </div>
+  );
+}
+
+function ConfirmEditModal({
+  onCancel,
+  onConfirm,
+}: {
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
+      <button
+        aria-label="Cerrar confirmacion"
+        className="absolute inset-0 cursor-default"
+        onClick={onCancel}
+        type="button"
+      />
+      <div className="relative z-10 w-full max-w-[420px] rounded-lg border border-uploy-line bg-uploy-surface p-5 shadow-2xl">
+        <h2 className="text-sm font-semibold leading-5 text-uploy-primary">
+          Editar mensaje
+        </h2>
+        <p className="mt-3 text-xs leading-5 text-uploy-secondary">
+          Al guardar este cambio se descartaran los mensajes posteriores de esta
+          conversacion.
+        </p>
+        <div className="mt-6 flex items-center justify-end gap-3">
+          <button
+            className="rounded-full px-3 py-1.5 text-xs leading-4 text-uploy-primary transition hover:bg-uploy-line"
+            onClick={onCancel}
+            type="button"
+          >
+            Cancelar
+          </button>
+          <button
+            className="rounded-full bg-[linear-gradient(139deg,rgba(124,92,252,.85)_30%,rgba(168,156,255,.85)_75%,rgba(88,184,200,.85)_95%)] px-4 py-1.5 text-xs leading-4 text-white transition hover:brightness-110"
+            onClick={onConfirm}
+            type="button"
+          >
+            Continuar
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -86,7 +158,7 @@ function EditMessageCard({
 }) {
   return (
     <form
-      className="rounded-lg bg-uploy-tertiary p-3"
+      className="w-full rounded-lg bg-uploy-tertiary p-3"
       onSubmit={(event) => {
         event.preventDefault();
         onSubmit();
@@ -142,7 +214,11 @@ function UserMessage({
         </div>
       ) : null}
       <div className="mr-2 flex items-center gap-2 text-uploy-secondary">
-        <MessageAction icon={<Copy size={14} strokeWidth={1.7} />} label="Copy" />
+        <MessageAction
+          copyText={message.content ?? ""}
+          icon={<Copy size={14} strokeWidth={1.7} />}
+          label="Copy"
+        />
         <MessageAction
           icon={<Pencil size={14} strokeWidth={1.7} />}
           label="Edit message"
@@ -192,7 +268,11 @@ function AssistantMessage({ message }: { message: ChatMessage }) {
       </button>
 
       <div className="mt-3 flex items-center gap-3 text-uploy-secondary">
-        <MessageAction icon={<Copy size={14} strokeWidth={1.7} />} label="Copy" />
+        <MessageAction
+          copyText={blocks.join("\n\n")}
+          icon={<Copy size={14} strokeWidth={1.7} />}
+          label="Copy"
+        />
         <MessageAction
           icon={<Pencil size={14} strokeWidth={1.7} />}
           label="Edit response"
@@ -206,11 +286,44 @@ function AssistantMessage({ message }: { message: ChatMessage }) {
   );
 }
 
+async function copyToClipboard(text: string) {
+  if (!text.trim()) {
+    return false;
+  }
+
+  if (navigator.clipboard) {
+    try {
+      await navigator.clipboard.writeText(text);
+
+      return true;
+    } catch {
+      // Fall back to the textarea path below.
+    }
+  }
+
+  const textArea = document.createElement("textarea");
+
+  textArea.value = text;
+  textArea.setAttribute("readonly", "");
+  textArea.style.position = "fixed";
+  textArea.style.top = "-9999px";
+  document.body.appendChild(textArea);
+  textArea.select();
+
+  const copied = document.execCommand("copy");
+
+  document.body.removeChild(textArea);
+
+  return copied;
+}
+
 function MessageAction({
+  copyText,
   icon,
   label,
   onClick,
 }: {
+  copyText?: string;
   icon: ReactNode;
   label: string;
   onClick?: () => void;
@@ -222,12 +335,16 @@ function MessageAction({
     <button
       aria-label={label}
       className="flex size-5 items-center justify-center rounded text-uploy-secondary transition hover:bg-uploy-surface hover:text-uploy-primary"
-      onClick={() => {
+      onClick={async () => {
         onClick?.();
 
         if (isCopy) {
-          setHasCopied(true);
-          window.setTimeout(() => setHasCopied(false), 900);
+          const copied = await copyToClipboard(copyText ?? "");
+
+          if (copied) {
+            setHasCopied(true);
+            window.setTimeout(() => setHasCopied(false), 900);
+          }
         }
       }}
       type="button"

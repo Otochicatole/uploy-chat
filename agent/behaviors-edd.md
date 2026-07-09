@@ -61,7 +61,7 @@ Esta guia resume los comportamientos globales. Ver `features/` para detalle por 
 ## EDD-009 - Editar mensaje de usuario
 
 - Evento: submit de tarjeta de edicion en `ConversationWorkspace`.
-- Decision: llama `PATCH /api/chat/messages/[messageId]`; contenido vacio devuelve error. Si encuentra el mensaje, corta la conversacion desde ese mensaje.
+- Decision: la tarjeta de edicion se renderiza inline en la posicion del mensaje. Si hay mensajes posteriores, muestra un modal de confirmacion antes de llamar `PATCH /api/chat/messages/[messageId]`; contenido vacio devuelve error. Si encuentra el mensaje, corta la conversacion desde ese mensaje.
 - Datos: reemplaza el mensaje de usuario, descarta mensajes posteriores y agrega respuesta asistente completa.
 - Desenlace: se guarda el thread actualizado en `chat-db.json`.
 
@@ -100,12 +100,12 @@ Esta guia resume los comportamientos globales. Ver `features/` para detalle por 
 - Datos: `selectedModel` global y `activeThread.selectedModel` cuando corresponde.
 - Desenlace: actualiza el texto del selector y reemplaza `?model=` en la URL actual.
 
-## EDD-015 - Copiar accion visual
+## EDD-015 - Copiar mensaje
 
 - Evento: click en accion `Copy`.
-- Decision: no copia al clipboard actualmente; solo cambia estado visual.
+- Decision: copia al portapapeles con Clipboard API y fallback con `textarea`; usuario copia `content`, asistente copia todos los `blocks`.
 - Datos: estado local `hasCopied` en `MessageAction`.
-- Desenlace: icono cambia a check por 900 ms.
+- Desenlace: texto queda copiado y el icono cambia a check por 900 ms.
 
 ## EDD-016 - Cambiar modelo desde listado de chats
 
