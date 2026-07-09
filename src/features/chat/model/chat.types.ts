@@ -28,6 +28,7 @@ export type ChatThread = {
   title: string;
   preview: string;
   updatedAtLabel?: string;
+  selectedModel?: string;
   projectId?: string;
   messages: ChatMessage[];
 };
@@ -56,6 +57,14 @@ export type ChatState = {
   selectedModel: string;
   projects: ChatProject[];
   globalChats: ChatThread[];
+};
+
+export type ChatRouteState = {
+  mode: WorkspaceMode;
+  activeProjectId?: string | null;
+  activeChatId?: string | null;
+  projectTab?: ProjectTabId;
+  selectedModel?: string | null;
 };
 
 export type ProjectTab = {

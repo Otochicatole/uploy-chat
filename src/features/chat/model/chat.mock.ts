@@ -6,12 +6,9 @@ export const projectTabs: ProjectTab[] = [
   { id: "system-prompt", label: "System prompt" },
 ];
 
-export const modelOptions = [
-  "Model",
-  "GPT-4.1",
-  "Claude Sonnet",
-  "Uploy Analyst",
-];
+export const defaultModel = "Model";
+
+export const modelOptions = ["GPT-4.1", "Claude Sonnet", "Uploy Analyst"];
 
 export const loremResponse =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus. Quisque quis nulla in velit congue feugiat nec at eros. Aliquam in est non tortor elementum hendrerit. Vestibulum efficitur imperdiet ultricies. In auctor bibendum felis vitae feugiat. Fusce et metus nisl. Nulla faucibus neque id odio malesuada aliquet. Sed et metus luctus, blandit mi ac, venenatis mauris. Suspendisse ante urna, sagittis nec lectus sit amet, placerat euismod elit. Aliquam sollicitudin nisl ligula, et dignissim justo commodo id. Sed lorem leo, congue eu lectus eget, blandit pulvinar tortor. Integer tincidunt lacinia congue. In hac habitasse platea dictumst. Cras tincidunt nibh mi, facilisis egestas metus commodo vitae.";
@@ -24,13 +21,14 @@ export const initialChatState: ChatState = {
   activeProjectId: null,
   activeChatId: null,
   projectTab: "chat",
-  selectedModel: "Model",
+  selectedModel: defaultModel,
   globalChats: [
     {
       id: "global-chat-1",
       title: "Lorem ipsum dolor sit amet",
       preview: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
       updatedAtLabel: "17 jun",
+      selectedModel: "GPT-4.1",
       messages: [
         {
           id: "global-user-1",
@@ -52,6 +50,8 @@ export const initialChatState: ChatState = {
       id: "global-chat-2",
       title: "Lorem ipsum dolor sit amet, cons...",
       preview: "Donec imperdiet finibus ante et tempus.",
+      updatedAtLabel: "17 jun",
+      selectedModel: "Claude Sonnet",
       messages: [
         {
           id: "global-user-2",
@@ -73,6 +73,8 @@ export const initialChatState: ChatState = {
       id: "global-chat-3",
       title: "In auctor bibendum felis fesa de...",
       preview: "Fusce et metus nisl. Nulla faucibus neque id odio.",
+      updatedAtLabel: "17 jun",
+      selectedModel: "Uploy Analyst",
       messages: [],
     },
   ],
@@ -105,6 +107,7 @@ export const initialChatState: ChatState = {
           preview:
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus.",
           updatedAtLabel: "17 jun",
+          selectedModel: "GPT-4.1",
           messages: [
             {
               id: "project-user-1",
@@ -128,6 +131,8 @@ export const initialChatState: ChatState = {
           title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
           preview:
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet finibus ante et tempus.",
+          updatedAtLabel: "17 jun",
+          selectedModel: "Claude Sonnet",
           messages: [],
         },
       ],

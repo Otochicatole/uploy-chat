@@ -52,7 +52,7 @@ function ProjectChatPanel({
 }: {
   onChatSelect: (chatId: string) => void;
 }) {
-  const { activeProject } = useChat();
+  const { activeProject, setChatModel } = useChat();
 
   if (!activeProject) {
     return null;
@@ -73,7 +73,15 @@ function ProjectChatPanel({
     );
   }
 
-  return <ChatList chats={activeProject.chats} onChatSelect={onChatSelect} />;
+  return (
+    <ChatList
+      chats={activeProject.chats}
+      onChatModelSelect={(chatId, model) =>
+        setChatModel(chatId, model, activeProject.id)
+      }
+      onChatSelect={onChatSelect}
+    />
+  );
 }
 
 function SourcesPanel() {

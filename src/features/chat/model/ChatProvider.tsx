@@ -9,10 +9,17 @@ import {
   useRef,
   useState,
 } from "react";
-import { initialChatState, loremResponse, shortResponse } from "./chat.mock";
+import { useRouter } from "next/navigation";
+import {
+  defaultModel,
+  initialChatState,
+  loremResponse,
+  shortResponse,
+} from "./chat.mock";
 import type {
   ChatMessage,
   ChatProject,
+  ChatRouteState,
   ChatState,
   ChatThread,
   ContextAttachment,
@@ -34,12 +41,14 @@ type ChatContextValue = ChatState & {
   selectChat: (chatId: string, projectId?: string) => void;
   selectProject: (projectId: string) => void;
   sendMessage: (input: SendMessageInput) => void;
+  setChatModel: (chatId: string, model: string, projectId?: string | null) => void;
   setProjectTab: (tab: ProjectTabId) => void;
   setSelectedModel: (model: string) => void;
   startNewChat: () => void;
 };
 
 const ChatContext = createContext<ChatContextValue | null>(null);
+const CHAT_STATE_STORAGE_KEY = "uploy-chat-state-v1";
 
 function createId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -145,14 +154,232 @@ function mapAllThreads(
   };
 }
 
+function mapTargetThread(
+  state: ChatState,
+  chatId: string,
+  projectId: string | null | undefined,
+  mapper: (thread: ChatThread) => ChatThread,
+) {
+  if (projectId) {
+    return {
+      ...state,
+      projects: state.projects.map((project) =>
+        project.id === projectId
+          ? {
+              ...project,
+              chats: project.chats.map((chat) =>
+                chat.id === chatId ? mapper(chat) : chat,
+              ),
+            }
+          : project,
+      ),
+    };
+  }
+
+  return mapAllThreads(state, (thread) =>
+    thread.id === chatId ? mapper(thread) : thread,
+  );
+}
+
+function findProject(state: ChatState, projectId: string | null) {
+  if (!projectId) {
+    return null;
+  }
+
+  return state.projects.find((project) => project.id === projectId) ?? null;
+}
+
+function findThreadContext(
+  state: ChatState,
+  chatId: string | null,
+  projectId?: string | null,
+) {
+  if (!chatId) {
+    return null;
+  }
+
+  if (projectId) {
+    const project = findProject(state, projectId);
+    const thread = project?.chats.find((chat) => chat.id === chatId) ?? null;
+
+    return thread ? { projectId, thread } : null;
+  }
+
+  const globalThread =
+    state.globalChats.find((chat) => chat.id === chatId) ?? null;
+
+  if (globalThread) {
+    return { projectId: null, thread: globalThread };
+  }
+
+  for (const project of state.projects) {
+    const projectThread = project.chats.find((chat) => chat.id === chatId);
+
+    if (projectThread) {
+      return { projectId: project.id, thread: projectThread };
+    }
+  }
+
+  return null;
+}
+
+function routeToState(state: ChatState, route: ChatRouteState): ChatState {
+  const routeSelectedModel = route.selectedModel?.trim();
+
+  if (route.mode === "conversation") {
+    const threadContext = findThreadContext(
+      state,
+      route.activeChatId ?? null,
+      route.activeProjectId ?? null,
+    );
+
+    if (threadContext) {
+      return {
+        ...state,
+        mode: "conversation",
+        activeProjectId: threadContext.projectId,
+        activeChatId: threadContext.thread.id,
+        selectedModel:
+          routeSelectedModel ||
+          threadContext.thread.selectedModel ||
+          state.selectedModel ||
+          defaultModel,
+      };
+    }
+  }
+
+  if (route.mode === "project") {
+    const project = findProject(state, route.activeProjectId ?? null);
+
+    if (project) {
+      return {
+        ...state,
+        mode: "project",
+        activeProjectId: project.id,
+        activeChatId: null,
+        projectTab: route.projectTab ?? state.projectTab,
+        selectedModel: routeSelectedModel || state.selectedModel || defaultModel,
+      };
+    }
+  }
+
+  return {
+    ...state,
+    mode: "home",
+    activeProjectId: null,
+    activeChatId: null,
+    projectTab: "chat",
+    selectedModel: routeSelectedModel || state.selectedModel || defaultModel,
+  };
+}
+
+function settleLoadingMessages(state: ChatState): ChatState {
+  return mapAllThreads(state, (thread) => ({
+    ...thread,
+    messages: thread.messages.map((message) =>
+      message.status === "loading"
+        ? createAssistantMessage(createId("assistant-restored"), "Restored")
+        : message,
+    ),
+  }));
+}
+
+function readPersistedState() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const rawState = window.localStorage.getItem(CHAT_STATE_STORAGE_KEY);
+
+    if (!rawState) {
+      return null;
+    }
+
+    const parsedState = JSON.parse(rawState) as ChatState;
+
+    if (!Array.isArray(parsedState.projects)) {
+      return null;
+    }
+
+    return settleLoadingMessages(parsedState);
+  } catch {
+    return null;
+  }
+}
+
+function writePersistedState(state: ChatState) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.localStorage.setItem(CHAT_STATE_STORAGE_KEY, JSON.stringify(state));
+}
+
+function getProjectPath(projectId: string, tab: ProjectTabId = "chat") {
+  if (tab === "sources") {
+    return `/projects/${projectId}/sources`;
+  }
+
+  if (tab === "system-prompt") {
+    return `/projects/${projectId}/system-prompt`;
+  }
+
+  return `/projects/${projectId}`;
+}
+
+function getChatPath(chatId: string, projectId?: string | null) {
+  if (projectId) {
+    return `/projects/${projectId}/chats/${chatId}`;
+  }
+
+  return `/chats/${chatId}`;
+}
+
+function setModelSearchParam(model: string) {
+  const params = new URLSearchParams(window.location.search);
+
+  if (model) {
+    params.set("model", model);
+  } else {
+    params.delete("model");
+  }
+
+  const query = params.toString();
+  const nextUrl = query
+    ? `${window.location.pathname}?${query}`
+    : window.location.pathname;
+
+  window.history.replaceState(null, "", nextUrl);
+}
+
 function threadHasLoadingMessage(thread: ChatThread | null) {
   return Boolean(
     thread?.messages.some((message) => message.status === "loading"),
   );
 }
 
-export function ChatProvider({ children }: { children: React.ReactNode }) {
-  const [state, setState] = useState<ChatState>(initialChatState);
+const defaultRoute: ChatRouteState = {
+  mode: "home",
+  activeProjectId: null,
+  activeChatId: null,
+  projectTab: "chat",
+  selectedModel: null,
+};
+
+export function ChatProvider({
+  children,
+  initialRoute = defaultRoute,
+}: {
+  children: React.ReactNode;
+  initialRoute?: ChatRouteState;
+}) {
+  const router = useRouter();
+  const [state, setState] = useState<ChatState>(() =>
+    routeToState(initialChatState, initialRoute),
+  );
+  const [hasBootstrapped, setHasBootstrapped] = useState(false);
+  const stateRef = useRef(state);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => {
@@ -162,6 +389,47 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       timers.forEach((timer) => clearTimeout(timer));
     };
   }, []);
+
+  useEffect(() => {
+    const bootstrapTimer = window.setTimeout(() => {
+      const persistedState = readPersistedState() ?? initialChatState;
+      const routeState = routeToState(persistedState, initialRoute);
+
+      stateRef.current = routeState;
+      setState(routeState);
+      setHasBootstrapped(true);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(bootstrapTimer);
+    };
+  }, [initialRoute]);
+
+  useEffect(() => {
+    if (!hasBootstrapped) {
+      return;
+    }
+
+    stateRef.current = state;
+    writePersistedState(state);
+  }, [hasBootstrapped, state]);
+
+  const commitState = useCallback(
+    (updater: (currentState: ChatState) => ChatState) => {
+      const nextState = updater(stateRef.current);
+
+      stateRef.current = nextState;
+
+      if (hasBootstrapped) {
+        writePersistedState(nextState);
+      }
+
+      setState(nextState);
+
+      return nextState;
+    },
+    [hasBootstrapped],
+  );
 
   const activeProject = useMemo(
     () =>
@@ -189,7 +457,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   const resolveAssistantResponse = useCallback(
     (loadingMessageId: string, sourceContent: string) => {
-      setState((currentState) =>
+      commitState((currentState) =>
         mapAllThreads(currentState, (thread) => ({
           ...thread,
           messages: thread.messages.map((message) =>
@@ -200,7 +468,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         })),
       );
     },
-    [],
+    [commitState],
   );
 
   const queueAssistantResponse = useCallback(
@@ -215,38 +483,53 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   );
 
   const startNewChat = useCallback(() => {
-    setState((currentState) => ({
+    commitState((currentState) => ({
       ...currentState,
       mode: "home",
       activeProjectId: null,
       activeChatId: null,
       projectTab: "chat",
     }));
-  }, []);
+    router.push("/");
+  }, [commitState, router]);
 
   const selectProject = useCallback((projectId: string) => {
-    setState((currentState) => ({
+    commitState((currentState) => ({
       ...currentState,
       mode: "project",
       activeProjectId: projectId,
       activeChatId: null,
       projectTab: "chat",
     }));
-  }, []);
+    router.push(getProjectPath(projectId));
+  }, [commitState, router]);
 
   const selectChat = useCallback((chatId: string, projectId?: string) => {
-    setState((currentState) => ({
-      ...currentState,
-      mode: "conversation",
-      activeProjectId: projectId ?? null,
-      activeChatId: chatId,
-    }));
-  }, []);
+    commitState((currentState) => {
+      const threadContext = findThreadContext(
+        currentState,
+        chatId,
+        projectId ?? null,
+      );
+
+      return {
+        ...currentState,
+        mode: "conversation",
+        activeProjectId: projectId ?? null,
+        activeChatId: chatId,
+        selectedModel:
+          threadContext?.thread.selectedModel ??
+          currentState.selectedModel ??
+          defaultModel,
+      };
+    });
+    router.push(getChatPath(chatId, projectId));
+  }, [commitState, router]);
 
   const createProject = useCallback((name: string) => {
     const projectId = createId("project");
 
-    setState((currentState) => ({
+    commitState((currentState) => ({
       ...currentState,
       mode: "project",
       activeProjectId: projectId,
@@ -263,7 +546,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         ...currentState.projects,
       ],
     }));
-  }, []);
+    router.push(getProjectPath(projectId));
+  }, [commitState, router]);
 
   const sendMessage = useCallback(
     ({ content, files = [] }: SendMessageInput) => {
@@ -278,13 +562,13 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       const loadingMessageId = createId("assistant-loading");
       const attachments = files.map(fileToAttachment);
       const sourceFiles = files.map(fileToSource);
+      const targetProjectId =
+        state.activeProjectId && state.mode !== "home"
+          ? state.activeProjectId
+          : null;
+      const targetChatId = state.activeChatId ?? createId("chat");
 
-      setState((currentState) => {
-        const targetProjectId =
-          currentState.activeProjectId && currentState.mode !== "home"
-            ? currentState.activeProjectId
-            : null;
-        const targetChatId = currentState.activeChatId ?? createId("chat");
+      commitState((currentState) => {
         const userMessage: ChatMessage = {
           id: userMessageId,
           role: "user",
@@ -324,6 +608,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
                       title: createTitle(messageContent),
                       preview: createPreview(messageContent),
                       updatedAtLabel: "Ahora",
+                      selectedModel: currentState.selectedModel,
                       messages: messagesToAdd,
                     },
                     ...project.chats,
@@ -341,6 +626,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
                         title: chat.title || createTitle(messageContent),
                         preview: createPreview(messageContent),
                         updatedAtLabel: "Ahora",
+                        selectedModel:
+                          chat.selectedModel ?? currentState.selectedModel,
                         messages: [...chat.messages, ...messagesToAdd],
                       }
                     : chat,
@@ -366,6 +653,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
                 title: createTitle(messageContent),
                 preview: createPreview(messageContent),
                 updatedAtLabel: "Ahora",
+                selectedModel: currentState.selectedModel,
                 messages: messagesToAdd,
               },
               ...currentState.globalChats,
@@ -384,6 +672,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
                   ...chat,
                   preview: createPreview(messageContent),
                   updatedAtLabel: "Ahora",
+                  selectedModel: chat.selectedModel ?? currentState.selectedModel,
                   messages: [...chat.messages, ...messagesToAdd],
                 }
               : chat,
@@ -392,8 +681,16 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       });
 
       queueAssistantResponse(loadingMessageId, messageContent);
+      router.push(getChatPath(targetChatId, targetProjectId));
     },
-    [queueAssistantResponse],
+    [
+      queueAssistantResponse,
+      router,
+      state.activeChatId,
+      state.activeProjectId,
+      state.mode,
+      commitState,
+    ],
   );
 
   const editUserMessage = useCallback(
@@ -406,7 +703,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
       const loadingMessageId = createId("assistant-loading");
 
-      setState((currentState) =>
+      commitState((currentState) =>
         mapAllThreads(currentState, (thread) => {
           const messageIndex = thread.messages.findIndex(
             (message) => message.id === messageId && message.role === "user",
@@ -437,17 +734,20 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
       queueAssistantResponse(loadingMessageId, trimmedContent);
     },
-    [queueAssistantResponse],
+    [commitState, queueAssistantResponse],
   );
 
   const setProjectTab = useCallback((tab: ProjectTabId) => {
-    setState((currentState) => ({
+    commitState((currentState) => ({
       ...currentState,
       mode: "project",
       activeChatId: null,
       projectTab: tab,
     }));
-  }, []);
+    if (state.activeProjectId) {
+      router.push(getProjectPath(state.activeProjectId, tab));
+    }
+  }, [commitState, router, state.activeProjectId]);
 
   const addSourcesToActiveProject = useCallback((files: File[]) => {
     if (files.length === 0) {
@@ -456,7 +756,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     const sourceFiles = files.map(fileToSource);
 
-    setState((currentState) => {
+    commitState((currentState) => {
       if (!currentState.activeProjectId) {
         return currentState;
       }
@@ -473,10 +773,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         ),
       };
     });
-  }, []);
+  }, [commitState]);
 
   const removeSourceFromActiveProject = useCallback((sourceId: string) => {
-    setState((currentState) => {
+    commitState((currentState) => {
       if (!currentState.activeProjectId) {
         return currentState;
       }
@@ -495,10 +795,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         ),
       };
     });
-  }, []);
+  }, [commitState]);
 
   const saveSystemPrompt = useCallback((prompt: string) => {
-    setState((currentState) => {
+    commitState((currentState) => {
       if (!currentState.activeProjectId) {
         return currentState;
       }
@@ -512,14 +812,52 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         ),
       };
     });
-  }, []);
+  }, [commitState]);
+
+  const setChatModel = useCallback(
+    (chatId: string, model: string, projectId?: string | null) => {
+      const nextState = commitState((currentState) => {
+        const baseState =
+          currentState.activeChatId === chatId
+            ? { ...currentState, selectedModel: model }
+            : currentState;
+
+        return mapTargetThread(baseState, chatId, projectId, (thread) => ({
+          ...thread,
+          selectedModel: model,
+        }));
+      });
+
+      if (nextState.activeChatId === chatId) {
+        setModelSearchParam(model);
+      }
+    },
+    [commitState],
+  );
 
   const setSelectedModel = useCallback((model: string) => {
-    setState((currentState) => ({
-      ...currentState,
-      selectedModel: model,
-    }));
-  }, []);
+    commitState((currentState) => {
+      const baseState = {
+        ...currentState,
+        selectedModel: model,
+      };
+
+      if (!currentState.activeChatId) {
+        return baseState;
+      }
+
+      return mapTargetThread(
+        baseState,
+        currentState.activeChatId,
+        currentState.activeProjectId,
+        (thread) => ({
+          ...thread,
+          selectedModel: model,
+        }),
+      );
+    });
+    setModelSearchParam(model);
+  }, [commitState]);
 
   const sidebarHistory = activeProject ? activeProject.chats : state.globalChats;
 
@@ -538,6 +876,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       selectChat,
       selectProject,
       sendMessage,
+      setChatModel,
       setProjectTab,
       setSelectedModel,
       startNewChat,
@@ -553,6 +892,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       selectChat,
       selectProject,
       sendMessage,
+      setChatModel,
       setProjectTab,
       setSelectedModel,
       sidebarHistory,
