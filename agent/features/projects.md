@@ -56,9 +56,9 @@ Agrupa conversaciones, fuentes y system prompt bajo un proyecto. El workspace de
 ### Menu de header
 
 - Evento: click en boton more del header.
-- Decision: toggle de menu local; opciones actuales son placeholder.
-- Datos: estado local `isMenuOpen`.
-- Desenlace: menu aparece/cierra sin modificar dominio.
+- Decision: abre un dropdown con `modelOptions` del mock principal y calcula si debe abrir hacia abajo o hacia arriba segun el espacio disponible.
+- Datos: estado local `isMenuOpen`, `selectedModel`.
+- Desenlace: al elegir modelo actualiza el modelo global activo y cierra el menu.
 
 ## Reglas importantes
 
@@ -67,9 +67,10 @@ Agrupa conversaciones, fuentes y system prompt bajo un proyecto. El workspace de
 - Los chats de proyecto llevan `projectId`.
 - Los chats pueden llevar `selectedModel`; si no lo tienen, usan el modelo global actual como fallback.
 - El menu de modelo por fila tiene altura maxima y scroll para evitar que quede cortado.
+- El menu de tres puntos del header tambien muestra modelos del mock principal y actualiza el selector del input.
 
 ## Notas para cambios
 
-- Si se agregan acciones reales al menu de proyecto, definirlas primero en `ChatProvider`.
+- Si se agregan acciones extra al menu de proyecto, separarlas del selector de modelos o crear secciones claras.
 - Si se permite renombrar proyecto, actualizar header, sidebar y persistencia.
 - Si se agrega borrado de proyecto, decidir que pasa con la ruta activa.

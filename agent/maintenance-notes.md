@@ -19,7 +19,7 @@ El proyecto es un prototipo front-end persistido en navegador. No hay:
 - `chat.mock.ts` centraliza `modelOptions`; mantener ahi cualquier cambio de modelos mock.
 - Varias etiquetas son placeholder o lorem.
 - Acciones de copiar, editar respuesta y branch son visuales o incompletas.
-- El menu de `ChatHeader` muestra opciones placeholder y no ejecuta acciones de dominio.
+- El menu de `ChatHeader` funciona como selector de modelos para el contexto actual del proyecto.
 
 ## Riesgos tecnicos
 

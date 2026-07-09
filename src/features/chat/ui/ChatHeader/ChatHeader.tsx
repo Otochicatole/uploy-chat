@@ -3,14 +3,33 @@
 import { IconButton } from "@/shared/ui/IconButton/IconButton";
 import { Folder } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { modelOptions } from "../../model/chat.mock";
+import { useChat } from "../../model/ChatProvider";
 
 type ChatHeaderProps = {
   title: string;
 };
 
 export function ChatHeader({ title }: ChatHeaderProps) {
+  const { selectedModel, setSelectedModel } = useChat();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuPlacement, setMenuPlacement] = useState<"top" | "bottom">("bottom");
   const menuRef = useRef<HTMLDivElement>(null);
+
+  function getMenuPlacement() {
+    const rect = menuRef.current?.getBoundingClientRect();
+
+    if (!rect) {
+      return "bottom";
+    }
+
+    const menuHeight = modelOptions.length * 36 + 8;
+    const gap = 8;
+    const hasRoomBelow = window.innerHeight - rect.bottom >= menuHeight + gap;
+    const hasRoomAbove = rect.top >= menuHeight + gap;
+
+    return hasRoomBelow || !hasRoomAbove ? "bottom" : "top";
+  }
 
   useEffect(() => {
     if (!isMenuOpen) {
@@ -45,23 +64,44 @@ export function ChatHeader({ title }: ChatHeaderProps) {
       <div className="relative" ref={menuRef}>
         <IconButton
           icon="more"
-          label="Project actions"
-          onClick={() => setIsMenuOpen((open) => !open)}
+          label="Select project model"
+          onClick={() =>
+            setIsMenuOpen((open) => {
+              if (!open) {
+                setMenuPlacement(getMenuPlacement());
+              }
+
+              return !open;
+            })
+          }
         />
         {isMenuOpen ? (
-          <div className="absolute right-0 top-8 z-20 w-[212px] rounded-lg border border-uploy-line bg-uploy-surface p-1 shadow-2xl">
-            {["Lorem ipsum", "Lorem ipsum", "Lorem ipsum", "Lorem ipsum"].map(
-              (option, index) => (
+          <div
+            className={[
+              "absolute right-0 z-20 max-h-[160px] w-[212px] overflow-y-auto rounded-lg border border-uploy-line bg-uploy-surface p-1 shadow-2xl",
+              menuPlacement === "bottom" ? "top-8" : "bottom-8",
+            ].join(" ")}
+          >
+            {modelOptions.map((option) => {
+              const isSelected = option === selectedModel;
+
+              return (
                 <button
-                  className="flex h-8 w-full items-center rounded px-2 text-left text-xs leading-4 text-uploy-secondary transition hover:bg-uploy-focus hover:text-uploy-primary"
-                  key={`${option}-${index}`}
-                  onClick={() => setIsMenuOpen(false)}
+                  className={[
+                    "flex h-9 w-full items-center rounded px-3 text-left text-xs leading-4 transition hover:bg-uploy-focus hover:text-uploy-primary",
+                    isSelected ? "text-uploy-primary" : "text-uploy-secondary",
+                  ].join(" ")}
+                  key={option}
+                  onClick={() => {
+                    setSelectedModel(option);
+                    setIsMenuOpen(false);
+                  }}
                   type="button"
                 >
                   {option}
                 </button>
-              ),
-            )}
+              );
+            })}
           </div>
         ) : null}
       </div>
